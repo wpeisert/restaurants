@@ -8,6 +8,8 @@ use App\Models\Category;
 
 class CategoryController extends Controller
 {
+    private const MAX_PER_PAGE = 15;
+
     /**
      * Display a listing of the resource.
      *
@@ -15,7 +17,9 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $categories = Category::latest()->paginate(self::MAX_PER_PAGE);
+        return view('categories.index', compact('categories'))
+            ->with('i', (request()->input('page', 1) - 1) * self::MAX_PER_PAGE);
     }
 
     /**
@@ -25,7 +29,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        return view('categories.create');
     }
 
     /**
@@ -36,7 +40,11 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-        //
+        $category = Category::create($request->all());
+        //CategoryCreatedEvent::dispatch($category);
+
+        return redirect()->route('categories.index')
+            ->with('success','Category created successfully.');
     }
 
     /**
