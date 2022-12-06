@@ -24,7 +24,6 @@ class Category extends Model
 
     protected $attributes = [
         'sortby' => 0,
-        'active' => true,
     ];
 
     /**

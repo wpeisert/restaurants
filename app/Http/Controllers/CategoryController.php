@@ -17,7 +17,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::latest()->paginate(self::MAX_PER_PAGE);
+        $categories = Category::query()->orderBy('sortby')->paginate(self::MAX_PER_PAGE);
         return view('categories.index', compact('categories'))
             ->with('i', (request()->input('page', 1) - 1) * self::MAX_PER_PAGE);
     }

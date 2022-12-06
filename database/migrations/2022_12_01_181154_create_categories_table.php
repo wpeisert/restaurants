@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('description', 255)->nullable();
             $table->string('image', 63)->nullable();
             $table->integer('sortby')->default(0);
-            $table->boolean('active')->default(true);
+            $table->boolean('active')->default(false);
         });
     }
 

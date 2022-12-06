@@ -1,6 +1,6 @@
 <tr>
     <td>
-        image
+        {{ $category->image }}
     </td>
     <td>
         {{ $category->name }}
