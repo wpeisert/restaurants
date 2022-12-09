@@ -40,7 +40,15 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-        $category = Category::create($request->all());
+        $parameters = $request->all();
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            $image = $request->image;
+            $imageName = $image->hashName();
+            $image->move(public_path('images'), $imageName);
+            $parameters['image'] = $imageName;
+        }
+
+        $category = Category::create($parameters);
         //CategoryCreatedEvent::dispatch($category);
 
         return redirect()->route('categories.index')

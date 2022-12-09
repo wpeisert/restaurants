@@ -24,13 +24,12 @@
             </p>
         </header>
 
-        <form method="post" action="{{ route('categories.store') }}" class="mt-6 space-y-6">
+        <form method="post" action="{{ route('categories.store') }}" enctype="multipart/form-data" class="mt-6 space-y-6">
             @csrf
 
             <div>
                 <x-input-label for="image" :value="__('Category image')" />
-                <x-text-input id="image" name="image" type="text" class="mt-1 block w-full" required autofocus
-                              autocomplete="image" />
+                <input type="file" id="image" class="form-control" name="image" />
                 <x-input-error class="mt-2" :messages="$errors->get('image')" />
             </div>
 

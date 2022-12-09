@@ -1,6 +1,10 @@
 <tr>
     <td>
-        {{ $category->image }}
+        @if ($category->image)
+        <img src="{{asset('images/' . $category->image)}}" />
+        @else
+            no image
+        @endif
     </td>
     <td>
         {{ $category->name }}
