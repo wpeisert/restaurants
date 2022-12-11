@@ -24,14 +24,24 @@
                             </p>
                         </header>
 
-                        <form action="{{ route('categories.update',$category->id) }}" method="POST">
+                        <form action="{{ route('categories.update',$category->id) }}" method="POST" enctype="multipart/form-data" class="mt-6 space-y-6">
                             @csrf
                             @method('PUT')
 
                             <div>
-                                <x-input-label for="image" :value="__('Category image')" />
-                                <x-text-input id="image" name="image" type="text" class="mt-1 block w-full" required autofocus
-                                              autocomplete="image" value="{{ $category->image }}"/>
+                                <x-input-label for="image" :value="__('Current category image')" />
+                                @if ($category->image)
+                                    <img src="{{asset('images/' . $category->image)}}" />
+                                    <br />
+                                    delete image: <input type="checkbox" id="image_delete" name="image_delete"
+                                                        value="1"/>
+                                @else
+                                    no image
+                                @endif
+                            </div>
+                            <div>
+                                <x-input-label for="image" :value="__('New category image')" />
+                                <input type="file" id="image" class="form-control" name="image" />
                                 <x-input-error class="mt-2" :messages="$errors->get('image')" />
                             </div>
 

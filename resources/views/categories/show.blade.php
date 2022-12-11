@@ -33,7 +33,11 @@
                             <div class="col-xs-12 col-sm-12 col-md-12">
                                 <div class="form-group">
                                     <strong>Image:</strong>
-                                    {{ $category->image }}
+                                    @if ($category->image)
+                                        <img src="{{asset('images/' . $category->image)}}" />
+                                    @else
+                                        no image
+                                    @endif
                                 </div>
                             </div>
                         </div>

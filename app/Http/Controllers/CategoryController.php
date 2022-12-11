@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
 {
@@ -40,15 +43,10 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-        $parameters = $request->all();
-        if ($request->hasFile('image') && $request->file('image')->isValid()) {
-            $image = $request->image;
-            $imageName = $image->hashName();
-            $image->move(public_path('images'), $imageName);
-            $parameters['image'] = $imageName;
-        }
+        $params = $request->all();
+        $params['image'] = $this->storeImage($request);
+        $category = Category::create($params);
 
-        $category = Category::create($parameters);
         //CategoryCreatedEvent::dispatch($category);
 
         return redirect()->route('categories.index')
@@ -86,7 +84,15 @@ class CategoryController extends Controller
      */
     public function update(UpdateCategoryRequest $request, Category $category)
     {
-        $category->update($request->all());
+        $params = $request->all();
+        $params['image'] = $category->image;
+        $newImageName = $this->storeImage($request);
+        if ($newImageName || array_key_exists('image_delete', $params)) {
+            $this->deleteImage($category->image);
+            $params['image'] = $newImageName;
+        }
+
+        $category->update($params);
 
         return redirect()->route('categories.index')
             ->with('success','Category updated successfully');
@@ -100,9 +106,29 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
+        $this->deleteImage($category->image);
         $category->delete();
 
         return redirect()->route('categories.index')
             ->with('success','Category deleted successfully');
+    }
+
+    private function storeImage(Request $request): string
+    {
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            $image = $request->image;
+            $imageName = $image->hashName();
+            $image->move(public_path('images'), $imageName);
+            return $imageName;
+        }
+
+        return '';
+    }
+
+    private function deleteImage(string $imageName)
+    {
+        if ($imageName) {
+            File::delete(public_path("images/$imageName"));
+        }
     }
 }
